@@ -1,59 +1,47 @@
 import { DATA_CONTACT } from "src/__data__";
-import { SET_CONTACT_FAILURE, SET_CONTACT_REQUEST, SET_CONTACT_SUCCESS, 
-  FETCH_CONTACTS_FAILURE, FETCH_CONTACTS_REQUEST, FETCH_CONTACTS_SUCCESS, 
-  ProjectActions } from "../actions/actions";
+import {
+  fetchContacts
+} from "../actions/actions";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ContactDto } from "src/types/dto/ContactDto";
 
-const initialState = {
+interface ContactsState {
+  current: ContactDto | null;
+  loading: boolean;
+  contacts: ContactDto[];
+  error: string | null;
+}
+
+const initialState: ContactsState = {
   current: DATA_CONTACT[3],
   loading: false,
   contacts: DATA_CONTACT,
-  error: "",
+  error: null,
 };
 
-const contactsReducer = (state = initialState, action: ProjectActions) => {
-  console.log(state)
-  switch (action.type) {
-    case FETCH_CONTACTS_REQUEST:
-      return {
-        ...state,
-        loading: true,
-      };
-    case FETCH_CONTACTS_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        contacts: action.payload,
-        error: "",
-      };
-    case FETCH_CONTACTS_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        contacts: [],
-        error: action.payload,
-      };
-    case SET_CONTACT_REQUEST:
-      return {
-        ...state,
-        loading: true,
-      };
-    case SET_CONTACT_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        current: action.payload,
-        error: "",
-      };
-    case SET_CONTACT_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        current: null,
-        error: action.payload,
-      };      
-    default:
-      return state;
+export const contactsSlice = createSlice({
+  name: 'contacts',
+  initialState: initialState,
+  reducers: {
+    setCurrentContact: (state, action: PayloadAction<ContactDto>) => {
+      state.current = action.payload;
+    }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchContacts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchContacts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.contacts = action.payload;
+      })
+      .addCase(fetchContacts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   }
-};
+});
 
-export default contactsReducer;
+export const { setCurrentContact } = contactsSlice.actions;
