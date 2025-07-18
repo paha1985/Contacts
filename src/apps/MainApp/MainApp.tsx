@@ -1,11 +1,12 @@
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 import './MainApp.scss';
-import {ThemeProvider} from 'react-bootstrap';
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
-import {Layout} from 'src/components/Layout';
-import {ContactListPage, GroupPage, ContactPage, FavoritListPage, GroupListPage} from 'src/pages';
+import { ThemeProvider } from 'react-bootstrap';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Layout } from 'src/components/Layout';
+import { ContactListPage, GroupPage, ContactPage, FavoritListPage, GroupListPage } from 'src/pages';
 import { useAppDispatch, useAppSelector } from 'src/redux/hooks/hooks';
-import { fetchContacts, fetchFavorites, fetchGroups, setFavorites } from 'src/redux/actions/actions';
+import { fetchContacts, fetchFavorites, fetchGroups } from 'src/redux/actions/actions';
+import { setFavorites } from 'src/redux/reducers/favorite-reducer';
 
 
 export const MainApp = () => {
@@ -19,13 +20,13 @@ export const MainApp = () => {
     error: state.contacts?.error || state.groups?.errorGroups || null
   }));
 
-const favoriteIds = useAppSelector(state => state.favorites.ids);
+  const favoriteIds = useAppSelector(state => state.favorites.ids);
 
   useEffect(() => {
     dispatch(fetchContacts());
     dispatch(fetchGroups());
-        if (contacts.length > 0 && favoriteIds.length > 0) {
-      const favorites = contacts.filter(contact => 
+    if (contacts.length > 0 && favoriteIds.length > 0) {
+      const favorites = contacts.filter(contact =>
         favoriteIds.includes(contact.id)
       );
       dispatch(setFavorites(favorites));
@@ -46,7 +47,7 @@ const favoriteIds = useAppSelector(state => state.favorites.ids);
     return (
       <div className="alert alert-danger text-center">
         Ошибка: {error}
-        <button 
+        <button
           className="btn btn-sm btn-outline-danger ms-2"
           onClick={() => {
             dispatch(fetchContacts());
