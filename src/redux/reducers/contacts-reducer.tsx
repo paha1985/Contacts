@@ -1,9 +1,6 @@
-import { DATA_CONTACT } from "src/__data__";
-import {
-  fetchContacts
-} from "../actions/actions";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ContactDto } from "src/types/dto/ContactDto";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 interface ContactsState {
   current: ContactDto | null;
@@ -13,11 +10,16 @@ interface ContactsState {
 }
 
 const initialState: ContactsState = {
-  current: DATA_CONTACT[3],
+  current: null,
   loading: false,
-  contacts: DATA_CONTACT,
+  contacts: [],
   error: null,
 };
+
+interface Response<T> {
+  data: T;
+  status: number;
+}
 
 export const contactsSlice = createSlice({
   name: 'contacts',
@@ -26,22 +28,30 @@ export const contactsSlice = createSlice({
     setCurrentContact: (state, action: PayloadAction<ContactDto>) => {
       state.current = action.payload;
     }
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchContacts.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchContacts.fulfilled, (state, action) => {
-        state.loading = false;
-        state.contacts = action.payload;
-      })
-      .addCase(fetchContacts.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      });
   }
 });
 
 export const { setCurrentContact } = contactsSlice.actions;
+
+
+export const contactsApi = createApi({
+  reducerPath: 'cont',
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'https://fs.gcfiles.net/fileservice/file/download/a/177331/sc/280/h'
+  }),
+  endpoints: builder => ({
+    getCont: builder.query<Response<ContactDto>, void>({
+      query() {
+        return {
+          url: '/3f9021c6ea91fc0306ceb0e9c2f2e56c.json'
+        }
+      }
+    })
+  })
+})
+
+export const contReducer = contactsApi.reducer;
+export const contReducerPath = contactsApi.reducerPath;
+export const contMiddleware = contactsApi.middleware;
+
+export const { useGetContQuery } = contactsApi;

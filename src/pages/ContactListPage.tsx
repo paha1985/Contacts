@@ -1,38 +1,47 @@
-import { useState} from 'react';
-import {Col, Row} from 'react-bootstrap';
-import {ContactCard} from 'src/components/ContactCard';
-import {FilterForm, FilterFormValues} from 'src/components/FilterForm';
-import {ContactDto} from 'src/types/dto/ContactDto';
-import { useAppSelector } from 'src/redux/hooks/hooks';
+import { useEffect, useMemo, useState } from 'react';
+import { Col, Row } from 'react-bootstrap';
+import { ContactCard } from 'src/components/ContactCard';
+import { FilterForm, FilterFormValues } from 'src/components/FilterForm';
+import { ContactDto } from 'src/types/dto/ContactDto';
+import { useGetContQuery } from 'src/redux/reducers/contacts-reducer';
+import { useGetGroupQuery } from 'src/redux/reducers/groups-reducer';
 
 
 
 export const ContactListPage = () => {
+  const { data: contactsData, isLoading, isError } = useGetContQuery();
+  const { data: groupsData, isLoading: groupLoading, isError: groupError } = useGetGroupQuery();
 
-  const groupContacts = useAppSelector(state => state.groups.groupContacts)
+  const contacts = useMemo(() =>
+    (contactsData && Array.isArray(contactsData)) ? contactsData : [],
+    [contactsData]
+  );
 
-    const { contacts, loading, error } = useAppSelector(state => ({
-    contacts: state.contacts?.contacts || [],
-    loading: state.contacts?.loading || false,
-    error: state.contacts?.error || null
-    }));
+  const groupContacts = useMemo(() =>
+    (groupsData && Array.isArray(groupsData)) ? groupsData : [],
+    [groupsData]
+  );
 
   const [filteredContacts, setFilteredContacts] = useState<ContactDto[]>(contacts)
 
-  if (loading) {
+  useEffect(() => {
+    setFilteredContacts(contacts);
+  }, [contacts]);
+
+  if (isLoading || groupLoading) {
     return <div>Загрузка...</div>;
   }
 
-  if (error) {
-    return <div>Ошибка: {error}</div>;
+  if (isError || groupError) {
+    return <div>Ошибка загрузки контактов</div>;
   }
- 
+
   const onSubmit = (fv: Partial<FilterFormValues>) => {
-    let result = contacts;
+    let result: ContactDto[] = contacts;
 
     if (fv.name) {
       const nameFilter = fv.name.toLowerCase();
-      result = result.filter(contact => 
+      result = result.filter(contact =>
         contact.name.toLowerCase().includes(nameFilter)
       );
     }
@@ -41,7 +50,7 @@ export const ContactListPage = () => {
       const selectedGroup = groupContacts.find(group => group.id === fv.groupId);
 
       if (selectedGroup) {
-        result = result.filter(({id}) => (
+        result = result.filter(({ id }) => (
           selectedGroup.contactIds.includes(id)
         ))
       }

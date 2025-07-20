@@ -1,6 +1,6 @@
 import { ContactDto } from 'src/types/dto/ContactDto';
 import { fetchFavorites } from '../actions/actions';
-import { DATA_CONTACT } from 'src/__data__';
+// import { DATA_CONTACT } from 'src/__data__';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface FavoritesState {
@@ -12,7 +12,7 @@ interface FavoritesState {
 
 const initialState: FavoritesState = {
   items: [],
-  ids: [DATA_CONTACT[0].id, DATA_CONTACT[1].id, DATA_CONTACT[2].id, DATA_CONTACT[3].id],
+  ids: ["ecd667da-0513-4dd5-ba50-e7cc69f6573c", "84465d40-ef7b-41c7-8de4-29e7fb4ddd21"],
   loading: false,
   error: null
 };

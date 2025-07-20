@@ -1,7 +1,6 @@
-import { DATA_GROUP_CONTACT } from "src/__data__";
-import { fetchGroups } from "../actions/actions";
 import { createSlice } from "@reduxjs/toolkit";
 import { GroupContactsDto } from "src/types/dto/GroupContactsDto";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 interface GroupsState {
   loadingGroups: boolean;
@@ -11,28 +10,35 @@ interface GroupsState {
 
 const initialState: GroupsState = {
   loadingGroups: false,
-  groupContacts: DATA_GROUP_CONTACT,
+  groupContacts: [],
   errorGroups: null,
 };
+
+interface Response<T> {
+  data: T;
+  status: number;
+}
 
 export const groupSlice = createSlice({
   name: 'groups',
   initialState: initialState,
-  reducers: {
-
-  },
-  extraReducers: (builder) =>
-    builder
-      .addCase(fetchGroups.pending, (state) => {
-        state.loadingGroups = true;
-        state.errorGroups = null;
-      })
-      .addCase(fetchGroups.fulfilled, (state, action) => {
-        state.loadingGroups = false;
-        state.groupContacts = action.payload;
-      })
-      .addCase(fetchGroups.rejected, (state, action) => {
-        state.loadingGroups = false;
-        state.errorGroups = action.payload as string;
-      })
+  reducers: {}
 })
+
+export const groupApi = createApi({
+  reducerPath: 'groupApi',
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'https://fs.gcfiles.net/fileservice/file/download/a/177331/sc/398/h'
+  }),
+  endpoints: (builder) => ({
+    getGroup: builder.query<Response<GroupContactsDto[]>, void>({
+      query: () => '/e6c614d4c59fd9b546fb5abdfb456dd5.json'
+    })
+  })
+});
+
+export const groupReducer = groupApi.reducer;
+export const groupReducerPath = groupApi.reducerPath;
+export const groupMiddleware = groupApi.middleware;
+
+export const { useGetGroupQuery } = groupApi;

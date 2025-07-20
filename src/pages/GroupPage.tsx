@@ -1,28 +1,38 @@
-import { useEffect, useState} from 'react';
-import {Col, Row} from 'react-bootstrap';
-import {useParams} from 'react-router-dom';
-import {ContactDto} from 'src/types/dto/ContactDto';
-import {GroupContactsDto} from 'src/types/dto/GroupContactsDto';
-import {GroupContactsCard} from 'src/components/GroupContactsCard';
-import {Empty} from 'src/components/Empty';
-import {ContactCard} from 'src/components/ContactCard';
-import { useAppSelector } from 'src/redux/hooks/hooks';
+import { useEffect, useMemo, useState } from 'react';
+import { Col, Row } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
+import { ContactDto } from 'src/types/dto/ContactDto';
+import { GroupContactsDto } from 'src/types/dto/GroupContactsDto';
+import { GroupContactsCard } from 'src/components/GroupContactsCard';
+import { Empty } from 'src/components/Empty';
+import { ContactCard } from 'src/components/ContactCard';
+import { useGetContQuery } from 'src/redux/reducers/contacts-reducer';
+import { useGetGroupQuery } from 'src/redux/reducers/groups-reducer';
 
 export const GroupPage = () => {
+  const { data: contactsData } = useGetContQuery();
+  const { data: groupsData } = useGetGroupQuery();
 
-  const contactsState = useAppSelector(state => state.contacts.contacts);
-  const groupContactsState = useAppSelector(state => state.groups.groupContacts);
+  const contactsState = useMemo(() =>
+    (contactsData && Array.isArray(contactsData)) ? contactsData : [],
+    [contactsData]
+  );
 
-  const {groupId} = useParams<{ groupId: string }>();
+  const groupContactsState = useMemo(() =>
+    (groupsData && Array.isArray(groupsData)) ? groupsData : [],
+    [groupsData]
+  );
+
+  const { groupId } = useParams<{ groupId: string }>();
   const [contacts, setContacts] = useState<ContactDto[]>([]);
   const [groupContacts, setGroupContacts] = useState<GroupContactsDto>();
 
   useEffect(() => {
-    const findGroup = groupContactsState.find(({id}) => id === groupId);
+    const findGroup = groupContactsState.find(({ id }) => id === groupId);
     setGroupContacts(findGroup);
     setContacts(() => {
       if (findGroup) {
-        return contactsState.filter(({id}) => findGroup.contactIds.includes(id))
+        return contactsState.filter(({ id }) => findGroup.contactIds.includes(id))
       }
       return [];
     });

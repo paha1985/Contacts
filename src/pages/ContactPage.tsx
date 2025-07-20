@@ -1,18 +1,18 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { ContactCard } from 'src/components/ContactCard';
 import { Empty } from 'src/components/Empty';
 import { useAppDispatch, useAppSelector } from 'src/redux/hooks/hooks';
-import { setCurrentContact } from 'src/redux/reducers/contacts-reducer';
-// import { setContactSuccessAction } from 'src/redux/actions/actions';
-
-
+import { setCurrentContact, useGetContQuery } from 'src/redux/reducers/contacts-reducer';
 
 export const ContactPage = () => {
   const { contactId } = useParams<{ contactId: string }>();
   const dispatch = useAppDispatch();
-  const { contacts, current } = useAppSelector(state => state.contacts)
+  const { current } = useAppSelector(state => state.contacts)
+
+  const { data: contactsData } = useGetContQuery();
+  const contacts = useMemo(() => (contactsData && Array.isArray(contactsData)) ? contactsData : [], [contactsData]);
 
 
   const fetchContactById = useCallback((id: string) => {
