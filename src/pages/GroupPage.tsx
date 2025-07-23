@@ -6,11 +6,11 @@ import { GroupContactsDto } from 'src/types/dto/GroupContactsDto';
 import { GroupContactsCard } from 'src/components/GroupContactsCard';
 import { Empty } from 'src/components/Empty';
 import { ContactCard } from 'src/components/ContactCard';
-import { useGetContQuery } from 'src/redux/reducers/contacts-reducer';
-import { useGetGroupQuery } from 'src/redux/reducers/groups-reducer';
+import { useGetContactsQuery } from 'src/store/reducers/contacts-reducer';
+import { useGetGroupQuery } from 'src/store/reducers/groups-reducer';
 
 export const GroupPage = () => {
-  const { data: contactsData } = useGetContQuery();
+  const { data: contactsData } = useGetContactsQuery();
   const { data: groupsData } = useGetGroupQuery();
 
   const contactsState = useMemo(() =>

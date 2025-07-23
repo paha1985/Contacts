@@ -35,12 +35,12 @@ export const { setCurrentContact } = contactsSlice.actions;
 
 
 export const contactsApi = createApi({
-  reducerPath: 'cont',
+  reducerPath: 'contactsApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://fs.gcfiles.net/fileservice/file/download/a/177331/sc/280/h'
   }),
   endpoints: builder => ({
-    getCont: builder.query<Response<ContactDto>, void>({
+    getContacts: builder.query<Response<ContactDto>, void>({
       query() {
         return {
           url: '/3f9021c6ea91fc0306ceb0e9c2f2e56c.json'
@@ -50,8 +50,8 @@ export const contactsApi = createApi({
   })
 })
 
-export const contReducer = contactsApi.reducer;
+export const contactsReducer = contactsApi.reducer;
 export const contReducerPath = contactsApi.reducerPath;
-export const contMiddleware = contactsApi.middleware;
+export const contactsMiddleware = contactsApi.middleware;
 
-export const { useGetContQuery } = contactsApi;
+export const { useGetContactsQuery } = contactsApi;

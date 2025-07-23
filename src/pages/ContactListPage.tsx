@@ -3,13 +3,13 @@ import { Col, Row } from 'react-bootstrap';
 import { ContactCard } from 'src/components/ContactCard';
 import { FilterForm, FilterFormValues } from 'src/components/FilterForm';
 import { ContactDto } from 'src/types/dto/ContactDto';
-import { useGetContQuery } from 'src/redux/reducers/contacts-reducer';
-import { useGetGroupQuery } from 'src/redux/reducers/groups-reducer';
+import { useGetContactsQuery } from 'src/store/reducers/contacts-reducer';
+import { useGetGroupQuery } from 'src/store/reducers/groups-reducer';
 
 
 
 export const ContactListPage = () => {
-  const { data: contactsData, isLoading, isError } = useGetContQuery();
+  const { data: contactsData, isLoading, isError } = useGetContactsQuery();
   const { data: groupsData, isLoading: groupLoading, isError: groupError } = useGetGroupQuery();
 
   const contacts = useMemo(() =>

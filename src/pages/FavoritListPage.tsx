@@ -1,7 +1,7 @@
 import { Col, Row } from 'react-bootstrap';
 import { ContactCard } from 'src/components/ContactCard';
-import { useAppSelector } from 'src/redux/hooks/hooks';
-import { useGetContQuery } from 'src/redux/reducers/contacts-reducer';
+import { useAppSelector } from 'src/hooks/hooks';
+import { useGetContactsQuery } from 'src/store/reducers/contacts-reducer';
 import { ContactDto } from 'src/types/dto/ContactDto';
 
 export const FavoritListPage = (() => {
@@ -11,7 +11,7 @@ export const FavoritListPage = (() => {
     data: contactsResponse,
     isLoading: contactsLoading,
     isError: contactsError,
-  } = useGetContQuery();
+  } = useGetContactsQuery();
 
   const contacts: ContactDto[] = (contactsResponse && Array.isArray(contactsResponse))
     ? contactsResponse

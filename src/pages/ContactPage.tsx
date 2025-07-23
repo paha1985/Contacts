@@ -3,15 +3,15 @@ import { Col, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { ContactCard } from 'src/components/ContactCard';
 import { Empty } from 'src/components/Empty';
-import { useAppDispatch, useAppSelector } from 'src/redux/hooks/hooks';
-import { setCurrentContact, useGetContQuery } from 'src/redux/reducers/contacts-reducer';
+import { useAppDispatch, useAppSelector } from 'src/hooks/hooks';
+import { setCurrentContact, useGetContactsQuery } from 'src/store/reducers/contacts-reducer';
 
 export const ContactPage = () => {
   const { contactId } = useParams<{ contactId: string }>();
   const dispatch = useAppDispatch();
   const { current } = useAppSelector(state => state.contacts)
 
-  const { data: contactsData } = useGetContQuery();
+  const { data: contactsData } = useGetContactsQuery();
   const contacts = useMemo(() => (contactsData && Array.isArray(contactsData)) ? contactsData : [], [contactsData]);
 
 

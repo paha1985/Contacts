@@ -1,5 +1,5 @@
 import { combineReducers } from "redux";
-import { contactsSlice, contMiddleware, contReducer, contReducerPath } from "./reducers/contacts-reducer";
+import { contactsSlice, contactsMiddleware, contactsReducer, contReducerPath } from "./reducers/contacts-reducer";
 import { groupMiddleware, groupReducer, groupReducerPath, groupSlice } from "./reducers/groups-reducer";
 import { favoriteSlice } from "./reducers/favorite-reducer";
 import { configureStore } from "@reduxjs/toolkit";
@@ -8,7 +8,7 @@ const rootReducer = combineReducers({
   contacts: contactsSlice.reducer,
   favorites: favoriteSlice.reducer,
   groups: groupSlice.reducer,
-  [contReducerPath]: contReducer,
+  [contReducerPath]: contactsReducer,
   [groupReducerPath]: groupReducer
 });
 
@@ -17,7 +17,7 @@ export const store = configureStore({
   devTools: true,
   middleware(getDefaultMiddleware) {
     return getDefaultMiddleware().concat([
-      contMiddleware,
+      contactsMiddleware,
       groupMiddleware
     ])
   }

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { GroupContactsCard } from 'src/components/GroupContactsCard';
-import { useGetGroupQuery } from 'src/redux/reducers/groups-reducer';
+import { useGetGroupQuery } from 'src/store/reducers/groups-reducer';
 
 export const GroupListPage = () => {
   const { data: groupsData } = useGetGroupQuery();
