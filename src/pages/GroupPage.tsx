@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { ContactDto } from 'src/types/dto/ContactDto';
@@ -6,22 +6,19 @@ import { GroupContactsDto } from 'src/types/dto/GroupContactsDto';
 import { GroupContactsCard } from 'src/components/GroupContactsCard';
 import { Empty } from 'src/components/Empty';
 import { ContactCard } from 'src/components/ContactCard';
-import { useGetContactsQuery } from 'src/store/reducers/contacts-reducer';
-import { useGetGroupQuery } from 'src/store/reducers/groups-reducer';
+import contactStore from 'src/store/contactStore';
+import groupStore from 'src/store/groupStore';
+import { observer } from 'mobx-react-lite';
 
-export const GroupPage = () => {
-  const { data: contactsData } = useGetContactsQuery();
-  const { data: groupsData } = useGetGroupQuery();
+export const GroupPage = observer(() => {
 
-  const contactsState = useMemo(() =>
-    (contactsData && Array.isArray(contactsData)) ? contactsData : [],
-    [contactsData]
-  );
+  useEffect(() => {
+    contactStore.get();
+    groupStore.get();
+  }, [])
 
-  const groupContactsState = useMemo(() =>
-    (groupsData && Array.isArray(groupsData)) ? groupsData : [],
-    [groupsData]
-  );
+  const contactsState = contactStore.contacts;
+  const groupContactsState = groupStore.groupContacts;
 
   const { groupId } = useParams<{ groupId: string }>();
   const [contacts, setContacts] = useState<ContactDto[]>([]);
@@ -62,4 +59,4 @@ export const GroupPage = () => {
       ) : <Empty />}
     </Row>
   );
-};
+});

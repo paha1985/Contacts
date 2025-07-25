@@ -1,26 +1,25 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { ContactCard } from 'src/components/ContactCard';
 import { FilterForm, FilterFormValues } from 'src/components/FilterForm';
 import { ContactDto } from 'src/types/dto/ContactDto';
-import { useGetContactsQuery } from 'src/store/reducers/contacts-reducer';
-import { useGetGroupQuery } from 'src/store/reducers/groups-reducer';
+import contactStore from 'src/store/contactStore';
+import { observer } from 'mobx-react-lite';
+import groupStore from 'src/store/groupStore';
 
+export const ContactListPage = observer(() => {
+  useEffect(() => {
+    contactStore.get();
+    groupStore.get();
+  }, []);
 
+  const groupContacts = groupStore.groupContacts;
+  const groupLoading = groupStore.loadingGroups;
+  const groupError = groupStore.errorGroups;
 
-export const ContactListPage = () => {
-  const { data: contactsData, isLoading, isError } = useGetContactsQuery();
-  const { data: groupsData, isLoading: groupLoading, isError: groupError } = useGetGroupQuery();
-
-  const contacts = useMemo(() =>
-    (contactsData && Array.isArray(contactsData)) ? contactsData : [],
-    [contactsData]
-  );
-
-  const groupContacts = useMemo(() =>
-    (groupsData && Array.isArray(groupsData)) ? groupsData : [],
-    [groupsData]
-  );
+  const contacts = contactStore.contacts;
+  const isLoading = contactStore.isLoading;
+  const isError = contactStore.isError;
 
   const [filteredContacts, setFilteredContacts] = useState<ContactDto[]>(contacts)
 
@@ -75,4 +74,4 @@ export const ContactListPage = () => {
       </Col>
     </Row>
   );
-}
+})

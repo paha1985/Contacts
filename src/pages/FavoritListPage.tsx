@@ -1,23 +1,21 @@
+import { observer } from 'mobx-react-lite';
+import { useEffect } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import { ContactCard } from 'src/components/ContactCard';
-import { useAppSelector } from 'src/hooks/hooks';
-import { useGetContactsQuery } from 'src/store/reducers/contacts-reducer';
-import { ContactDto } from 'src/types/dto/ContactDto';
+import contactStore from 'src/store/contactStore';
+import favoritesStore from 'src/store/favoritesStore';
 
-export const FavoritListPage = (() => {
+export const FavoritListPage = observer(() => {
 
+  useEffect(() => {
+    contactStore.get();
+  }, [])
 
-  const {
-    data: contactsResponse,
-    isLoading: contactsLoading,
-    isError: contactsError,
-  } = useGetContactsQuery();
+  const contacts = contactStore.contacts;
+  const contactsLoading = contactStore.isLoading;
+  const contactsError = contactStore.isError;
 
-  const contacts: ContactDto[] = (contactsResponse && Array.isArray(contactsResponse))
-    ? contactsResponse
-    : [];
-
-  const favoriteIds = useAppSelector(state => state.favorites.ids);
+  const favoriteIds = favoritesStore.ids;
 
   const favorites = contacts.filter(contact =>
     favoriteIds.some(id => id === contact.id)
